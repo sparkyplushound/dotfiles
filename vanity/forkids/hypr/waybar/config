@@ -1,0 +1,29 @@
+{
+  "include": "~/.config/waybar/modules",
+  "layer": "top",
+  //"mode": "dock",
+  "exclusive": true,
+  "passthrough": false,
+  "position": "top",
+  "spacing": 3,
+  "fixed-center": true,
+  "ipc": true,
+  "margin-left": 2,
+  "margin-right": 2,
+
+  "modules-left": [
+	"hyprland/workspaces",
+	"temperature",
+	"custom/weather"
+	],
+
+  "modules-center": [
+	"clock#3",
+	],
+
+  "modules-right": [
+	"hyprland/window",
+	"battery",
+	"pulseaudio",
+	],
+}

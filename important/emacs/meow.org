@@ -1,0 +1,381 @@
+#+TITLE: Rats Emacs Config
+#+AUTHOR: rat
+#+DESCRIPTION: emacs config for the enlightened rodent
+#+STARTUP: overview
+
+* keys
+** bind-key
+#+begin_src emacs-lisp
+  (use-package bind-key
+    :ensure t)
+#+end_src
+** unbinding section
+#+begin_src emacs-lisp
+(global-unset-key (kbd "C-w"))
+
+(global-unset-key (kbd "C-k"))
+#+end_src
+** window/buffer management
+#+begin_src emacs-lisp
+(bind-key "C-c e" 'delete-window)
+
+(bind-key "C-w b" 'windmove-left)
+
+(bind-key "C-w f" 'windmove-right)
+
+(bind-key "C-w p" 'windmove-up)
+
+(bind-key "C-w n" 'windmove-down)
+
+(bind-key "C-w h" 'split-window-vertically)
+
+(bind-key "C-w v" 'split-window-horizontally)
+
+(bind-key "C-w =" 'balance-windows-area)
+
+(bind-key "C-c f" 'find-file)
+
+(bind-key "C-c i" 'save-buffer)
+
+(bind-key "C-c b" 'switch-to-buffer)
+
+(bind-key "C-c m" 'text-scale-increase)
+
+(bind-key "C-c n" 'text-scale-decrease)
+
+(bind-key "C-{" 'beginning-of-buffer)
+
+(bind-key "C-}" 'end-of-buffer)
+
+(bind-key "C-k b" 'kill-buffer)
+
+(bind-key "C-k l" 'kill-whole-line)
+#+end_src
+** dired related
+#+begin_src emacs-lisp
+(bind-key "C-c d" 'dired-jump)
+
+(bind-key "C-c q" 'dired-toggle-read-only)
+
+(bind-key "C-c s" 'async-shell-command)
+#+end_src
+** org related
+#+begin_src emacs-lisp
+(bind-key "C-c u" 'org-insert-link)
+#+end_src
+** misc binds
+#+begin_src emacs-lisp
+(bind-key "C-c C-c" 'compile)
+
+(bind-key "C-c v" 'eval-last-sexp)
+#+end_src
+** denote-related binds
+#+begin_src emacs-lisp
+(bind-key "C-c p c" 'denote)
+
+(bind-key "C-c p d" 'denote-subdirectory)
+
+(bind-key "C-c p t" 'denote-type)
+
+(bind-key "C-c p r" 'denote-rename-file)
+
+(bind-key "C-c p n" 'denote-link)
+#+end_src
+
+
+* package management
+** package repositories and intialization
+#+begin_src emacs-lisp
+(require 'package)
+
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                         ("org" . "https://orgmode.org/elpa/")
+                         ("elpa" . "https://elpa.gnu.org/packages/")))
+
+(package-initialize)
+(unless package-archive-contents
+  (package-refresh-contents))
+#+end_src
+
+#+begin_src emacs-lisp
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+
+(require 'use-package)
+(setq use-package-always-ensure t)
+#+end_src
+** auto-updating package
+#+begin_src emacs-lisp
+(use-package auto-package-update
+  :custom
+  (auto-package-update-interval 7)
+  (auto-package-update-prompt-before-update t)
+  (auto-package-update-hide-results t)
+  :config
+  (auto-package-update-maybe)
+  (auto-package-update-at-time "09:00"))
+#+end_src
+
+** GCMH
+#+begin_src emacs-lisp
+(use-package gcmh
+:config
+(gcmh-mode 1))
+
+(setq gc-cons-threshold 402653184
+ gc-cons-percentage 0.6)
+#+end_src
+
+** theming
+*** modus themes
+#+begin_src emacs-lisp
+(use-package modus-themes
+  :ensure t)
+#+end_src
+*** gruber-darker 
+#+begin_src emacs-lisp
+(use-package gruber-darker-theme
+  :ensure t)
+#+end_src
+*** ef themes
+#+begin_src emacs-lisp
+(use-package ef-themes
+  :ensure t
+  :config
+  (load-theme 'ef-winter t))
+#+end_src
+
+#+RESULTS:
+: t
+
+*** ui upgrades
+**** all-the-icons
+#+begin_src emacs-lisp
+(use-package all-the-icons
+ :ensure t
+ :if (display-graphic-p)
+ :config
+ (setq all-the-icons-scale-factor 1.0))
+#+end_src
+**** custom-modeline
+#+begin_src emacs-lisp
+ (setq-default mode-line-format
+   	'("%e"
+ 	my-modeline-buffer-name
+ 	" "
+ 	my-modeline-major-mode
+	    " "
+	    rat-modeline-buffer-identification
+	    ))
+
+(defvar-local my-modeline-buffer-name
+     '(:eval
+       (format "Buffer: %s"
+ 	      (propertize (buffer-name) 'face 'success))))
+
+  (put 'my-modeline-buffer-name 'risky-local-variable t)
+
+(defun my-modeline--major-mode-name ()
+  (capitalize (symbol-name major-mode)))
+
+(defvar-local my-modeline-major-mode
+    '(:eval
+      (propertize (my-modeline--major-mode-name) 'face 'bold)))
+
+  (put 'my-modeline-major-mode 'risky-local-variable t)
+
+(defvar-local rat-modeline-buffer-identification
+    '(:eval
+      (propertize (rat-modeline-buffer-name)
+		  'face 'success)))
+#+end_src
+**** org-superstar
+#+begin_src emacs-lisp
+(use-package org-superstar
+  :ensure t)
+
+(add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
+#+end_src
+**** vertico
+#+begin_src emacs-lisp
+(use-package vertico
+  :ensure t
+  :init
+  (vertico-mode))
+#+end_src
+***** vertico-posframe
+#+begin_src emacs-lisp
+(use-package vertico-posframe
+  :ensure t
+  :custom
+  (vertico-posframe-parameters
+   '((left-fringe . 8)
+     (right-fringe .8)))
+  :init
+  (vertico-posframe-mode))
+#+end_src
+**** golden-ratio
+#+begin_src emacs-lisp
+(use-package golden-ratio
+  :ensure t
+  :hook (after-init . golden-ratio-mode)
+  :custom
+  (golden-ratio-exclude-modes '(occur-mode)))
+
+#+end_src
+**** keycast
+#+begin_src emacs-lisp
+(use-package keycast
+  :ensure t
+  :init
+  (setq keycast-mode-line-insert-after 'rat-modeline-buffer-identification)
+  (keycast-mode-line-mode))
+
+#+end_src
+**** line-numbers
+#+begin_src emacs-lisp
+;;(setq display-line-numbers-type 'relative)
+
+;;(global-display-line-numbers-mode t)
+#+end_src
+**** font-setting(s)
+#+begin_src emacs-lisp
+(set-face-attribute 'default nil :font "Iosevka Nerd Font" :height 200)
+#+end_src
+**** cleaner startup
+#+begin_src emacs-lisp
+(setq inhibit-startup-message t)
+
+(setq ring-bell-function 'flash-mode-line)
+
+(setq custom-safe-themes t)
+
+(setq visible-bell t)
+
+(scroll-bar-mode -1) ;disable scrollbar :)
+
+(tool-bar-mode -1) ;disables the toolbar :)
+
+(tooltip-mode -1) ;disables tooltips :)
+
+(menu-bar-mode -1) ;disable menubar :)
+#+end_src
+** denote
+#+begin_src emacs-lisp
+  (use-package denote
+    :ensure
+    :config
+    (setq denote-directory "~/pleasedonotenter/denotes")
+    (setq denote-know-keywords '(("code" "config" "project" "music" "security"))))
+#+end_src
+*** denote-search
+#+begin_src emacs-lisp
+(use-package denote-search
+  :ensure t
+  :vc (:url "https://github.com/lmq-10/denote-search"
+       :rev :newest)
+  :bind
+  (("C-c , s" . denote-search))
+  :custom
+  ;; Disable help string (set it once you learn the commands)
+  ;; (denote-search-help-string "")
+  ;; Display keywords in results buffer
+  (denote-search-format-heading-function #'denote-search-format-heading-with-keywords))
+#+end_src
+** pdf-tools
+#+begin_src emacs-lisp
+(use-package pdf-tools
+  :ensure t
+  :config
+  (pdf-tools-install))
+
+
+#+end_src
+** org-tempo
+#+begin_src emacs-lisp
+(with-eval-after-load 'org
+  (require 'org-tempo)
+
+  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python"))
+  (add-to-list 'org-structure-template-alist '("cl" . "src C")))
+#+end_src
+
+** ido-mode
+#+begin_src emacs-lisp
+;;(setq ido-enable-flex-matching t)
+;;(setq ido-everywhere t)
+;;(ido-mode 1)
+#+end_src
+** windmove
+#+begin_src emacs-lisp
+(when (fboundp 'windmove-default-keybindings)
+  (windmove-default-keybindings))
+
+#+end_src
+** swiper
+#+begin_src emacs-lisp
+(use-package swiper
+  :defer t
+  :bind (("C-s" . swiper)
+         ("C-r" . swiper)))
+#+end_src
+
+** company
+#+begin_src emacs-lisp
+(use-package company
+  :ensure t
+  :defer t
+  :config
+  (global-company-mode)
+  (setq company-idle-delay 1.0
+	  company-minimum-prefix-length 1))
+#+end_src
+
+** sudo-edit
+#+begin_src emacs-lisp
+  (use-package sudo-edit
+    :ensure t)
+#+end_src
+** eglot
+#+begin_src emacs-lisp
+  (use-package eglot
+    :ensure t
+    :hook ((emacs-lisp-mode . eglot-ensure)
+  (python-mode . eglot-ensure)
+  (c-mode . eglot-ensure)))
+
+(setq eglot-server-programs '((python-mode . ("pylsp"))))
+
+#+end_src
+
+
+* Useful settings
+#+begin_src emacs-lisp
+  (column-number-mode 1)
+
+  (setq-default tab-width 4)
+
+  (setq org-hide-emphasis-markers t)
+
+  (electric-indent-mode -1)
+
+  (setq org-adapt-indentation nil)
+
+  (setq org-edit-src-content-indentation 0)
+
+  (setq custom-safe-themes t)
+
+  (global-auto-revert-mode t)
+
+  (setq org-hide-leading-stars nil)
+
+  (setq-default dired-listing-switches "-alh")
+
+  (setq make-backup-files nil)
+
+  (setq create-lockfiles nil)
+
+  (defalias 'yes-or-no-p 'y-or-n-p)
+#+end_src

@@ -1,0 +1,6 @@
+debian dependencies:
+ninja-build gettext cmake curl build-essential
+
+then cd into the neovim directory and run
+
+sudo make install

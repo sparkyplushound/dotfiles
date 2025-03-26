@@ -1,0 +1,9 @@
+emacs --daemon &
+
+xmodmap ~/.Xmodmap &
+
+#picom -b
+
+feh --bg-fill --randomize ~/dots/walls/*
+
+exec dwm

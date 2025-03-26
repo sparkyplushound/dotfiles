@@ -1,0 +1,10 @@
+on debian:
+build-essential && libgtk-3-dev && libgnutls28-dev && libtiff5-dev && libgif-dev && libjpeg-dev && libpng-dev && libxpm-dev && libncurses-dev && texinfo
+
+once the dependencies are installed just run the following commands:
+
+cd into emacs directory
+
+run ./configure
+
+run sudo make install
