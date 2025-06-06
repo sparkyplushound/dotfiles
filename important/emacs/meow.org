@@ -14,8 +14,10 @@
 (global-unset-key (kbd "C-w"))
 
 (global-unset-key (kbd "C-k"))
+
+(global-unset-key (kbd "M-SPC"))
 #+end_src
-** window/buffer management
+** window movement
 #+begin_src emacs-lisp
 (bind-key "C-c e" 'delete-window)
 
@@ -32,25 +34,28 @@
 (bind-key "C-w v" 'split-window-horizontally)
 
 (bind-key "C-w =" 'balance-windows-area)
-
-(bind-key "C-c f" 'find-file)
-
-(bind-key "C-c i" 'save-buffer)
-
-(bind-key "C-c b" 'switch-to-buffer)
-
-(bind-key "C-c m" 'text-scale-increase)
-
-(bind-key "C-c n" 'text-scale-decrease)
-
+#+end_src
+** buffer movement
+#+begin_src emacs-lisp
 (bind-key "C-{" 'beginning-of-buffer)
 
 (bind-key "C-}" 'end-of-buffer)
 
+(bind-key "C-k l" 'kill-whole-line)
+
+(bind-key "C-c m" 'text-scale-increase)
+
+(bind-key "C-c n" 'text-scale-decrease)
+#+end_src 
+** buffer creation/deletion
+#+begin_src emacs-lisp
 (bind-key "C-k b" 'kill-buffer)
 
-(bind-key "C-k l" 'kill-whole-line)
+(bind-key "C-c b" 'switch-to-buffer)
+
+(bind-key "C-c i" 'save-buffer)
 #+end_src
+
 ** dired related
 #+begin_src emacs-lisp
 (bind-key "C-c d" 'dired-jump)
@@ -65,9 +70,13 @@
 #+end_src
 ** misc binds
 #+begin_src emacs-lisp
+(bind-key "C-c f" 'find-file)
+
 (bind-key "C-c C-c" 'compile)
 
 (bind-key "C-c v" 'eval-last-sexp)
+
+(bind-key "C-c l" 'lsp-mode)
 #+end_src
 ** denote-related binds
 #+begin_src emacs-lisp
@@ -135,19 +144,21 @@
 *** gruber-darker 
 #+begin_src emacs-lisp
 (use-package gruber-darker-theme
-  :ensure t)
+  :ensure t
+)
+#+end_src
+*** catppuccin
+#+begin_src emacs-lisp
+     (use-package catppuccin-theme
+       :ensure t
+       :config
+       (load-theme 'catppuccin t))
 #+end_src
 *** ef themes
 #+begin_src emacs-lisp
 (use-package ef-themes
-  :ensure t
-  :config
-  (load-theme 'ef-winter t))
+  :ensure t)
 #+end_src
-
-#+RESULTS:
-: t
-
 *** ui upgrades
 **** all-the-icons
 #+begin_src emacs-lisp
@@ -157,7 +168,7 @@
  :config
  (setq all-the-icons-scale-factor 1.0))
 #+end_src
-**** custom-modeline
+**** rodent-modeline
 #+begin_src emacs-lisp
  (setq-default mode-line-format
    	'("%e"
@@ -214,6 +225,21 @@
   :init
   (vertico-posframe-mode))
 #+end_src
+***** orderless
+#+begin_src emacs-lisp
+(use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
+#+end_src
+**** centered-text
+#+begin_src emacs-lisp
+(use-package centered-window
+  :ensure t
+  :config
+  (centered-window-mode t))
+#+end_src
 **** golden-ratio
 #+begin_src emacs-lisp
 (use-package golden-ratio
@@ -234,13 +260,13 @@
 #+end_src
 **** line-numbers
 #+begin_src emacs-lisp
-;;(setq display-line-numbers-type 'relative)
+(setq display-line-numbers-type 'relative)
 
-;;(global-display-line-numbers-mode t)
+(global-display-line-numbers-mode t)
 #+end_src
 **** font-setting(s)
 #+begin_src emacs-lisp
-(set-face-attribute 'default nil :font "Iosevka Nerd Font" :height 200)
+(set-face-attribute 'default nil :font "Iosevka Nerd Font" :height 150)
 #+end_src
 **** cleaner startup
 #+begin_src emacs-lisp
@@ -338,15 +364,26 @@
   (use-package sudo-edit
     :ensure t)
 #+end_src
-** eglot
-#+begin_src emacs-lisp
-  (use-package eglot
-    :ensure t
-    :hook ((emacs-lisp-mode . eglot-ensure)
-  (python-mode . eglot-ensure)
-  (c-mode . eglot-ensure)))
 
-(setq eglot-server-programs '((python-mode . ("pylsp"))))
+#+end_src
+** cape
+#+begin_src emacs-lisp
+(use-package cape
+  :ensure t
+  :init
+  (add-to-list 'completion-at-point-functions #'capefile)
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  :config
+  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-silent)
+  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify)
+  )
+#+end_src
+** lsp-mode
+#+begin_src emacs-lisp
+(use-package lsp-mode
+  :ensure t
+  :commands (lsp lsp-deferred)
+)
 
 #+end_src
 

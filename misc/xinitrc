@@ -1,9 +1,11 @@
-emacs --daemon &
+# emacs --daemon &
 
 xmodmap ~/.Xmodmap &
 
-#picom -b
+picom -b
 
-feh --bg-fill --randomize ~/dots/walls/*
+feh --bg-fill --randomize ~/dotfiles/vanity/walls/*
+
+dunst &
 
 exec dwm

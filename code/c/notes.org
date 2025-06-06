@@ -1,0 +1,31 @@
+* What is a header
+a header file is a file with the .h extension, which contains function declarations
+and macro definitions that are shared between multiple source files. all lines that
+start with "#" are processed by a preprocessor which is a program that is controlled
+by the compiler. in a standard "Hello, World!" file, the preprocessor usually only
+grabs the "<stdio.h>" header.
+
+Hello, World:
+
+#+begin_src C
+#include <stdio.h>
+
+int main() {
+  printf("Hello, World!");
+  return 0;
+}
+#+end_src
+
+list of a few header files and their uses:
+1. stddef.h - Defines several useful types and macros.
+2. stdint.h - Defines exact width integer types.
+3. stdio.h - Defines core input and output functions
+4. stdlib.h - Defines numeric conversion functions, pseudo-random number generator, and memory allocation
+5. string.h - Defines string handling functions
+6. math.h - Defines common mathematical functions.
+
+* The "main()" function
+the "main()" function is the entry point of a C program and a files execution usually
+starts with the first line of main(), the empty brackets show that the function takes
+eithes no parameters or any parameter, if you wanted to specify that it can't take 
+any parameters you could write it as "main(void)" instead.
