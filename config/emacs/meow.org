@@ -266,7 +266,7 @@
 #+end_src
 **** font-setting(s)
 #+begin_src emacs-lisp
-(set-face-attribute 'default nil :font "Iosevka Nerd Font" :height 150)
+(set-face-attribute 'default nil :font "DejaVu Sans" :height 150)
 #+end_src
 **** cleaner startup
 #+begin_src emacs-lisp
